@@ -4,6 +4,7 @@ const inputPreco = document.getElementById('inputPreco');
 const btAdicionar = document.getElementById('btAdicionar');
 const btLimpar = document.getElementById('btLimpar');
 const tableNew = document.getElementById('tableBody');
+const totalPreco = document.getElementById('totalPreco');
 
 let objectItens = [];
 
@@ -17,11 +18,9 @@ const redesenhaLista = (objectItens) => {
     const tabelaQuantidade = document.createElement('th');
     const tabelaPreco = document.createElement('th');
 
-
     tabelaItem.textContent = item.desc;
     tabelaQuantidade.textContent = item.qnt;
     tabelaPreco.textContent = item.preco;
-
 
     tabelaTr.appendChild(tabelaItem);
     tabelaTr.appendChild(tabelaQuantidade);
@@ -30,10 +29,20 @@ const redesenhaLista = (objectItens) => {
   }
 };
 
+const calcularTotal = () => {
+  let total = 0;
+  for (let i = 0; i < objectItens.length; i++) {
+    const quantidade = parseInt(objectItens[i].qnt);
+    const preco = parseFloat(objectItens[i].preco.replace('R$ ', '').replace(',', '.'));
+    total += quantidade * preco;
+  }
+  return total.toFixed(2).replace('.', ',');
+}
+
 const handleBtAdicionarClick = () => {
   const item = inputItem.value;
   const quantidade = inputQuantidade.value;
-  const preco = inputPreco.value;
+  let preco = inputPreco.value;
   if (!item) {
     alert('Necessário digitar um item!');
     return;
@@ -50,20 +59,25 @@ const handleBtAdicionarClick = () => {
   inputPreco.value = '';
   inputItem.focus();
 
+  preco = parseFloat(preco).toFixed(2).replace('.', ',');
+  preco = `R$ ${preco}`;
+
   objectItens.push({
     desc: item,
     qnt: quantidade,
     preco: preco,
   });
 
-
   redesenhaLista(objectItens);
+  const total = calcularTotal(); 
+  totalPreco.textContent = total;
 };
 
 const handleBtLimparClick = () => {
   objectItens = [];
   redesenhaLista(objectItens);
   inputItem.focus();
+  totalPreco.textContent = '';
 };
 
 btAdicionar.onclick = handleBtAdicionarClick;
